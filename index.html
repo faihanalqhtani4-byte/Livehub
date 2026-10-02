@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LIVEHUB</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{
+ min-height:100vh;
+ color:white;
+ background:
+ radial-gradient(circle at 20% 10%,#ff005033,transparent 35%),
+ radial-gradient(circle at 80% 90%,#00f2ea22,transparent 35%),
+ #08090d
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+header{
+ height:70px;padding:0 20px;
+ display:flex;align-items:center;justify-content:space-between;
+ background:#0b0c11e8;
+ border-bottom:1px solid #ffffff12;
+ position:sticky;top:0;z-index:10
+}
+.logo{font-size:23px;font-weight:900}
+.logo span{color:#ff0050}
+.status{color:#ff4770;font-size:12px;font-weight:bold}
+.dot{
+ display:inline-block;width:9px;height:9px;border-radius:50%;
+ background:#ff0050;box-shadow:0 0 12px #ff0050;margin-right:6px
+}
+
+main{max-width:1050px;margin:auto;padding:30px 18px 70px}
+.hero{text-align:center;padding:35px 10px}
+.hero h1{font-size:clamp(38px,8vw,70px);font-weight:900}
+.hero h1 span{
+ background:linear-gradient(90deg,#ff0050,#ff2f6d,#00f2ea);
+ -webkit-background-clip:text;color:transparent
+}
+.hero p{color:#999;margin-top:15px}
+
+.card{
+ background:#15161dcc;
+ border:1px solid #ffffff12;
+ border-radius:22px;
+ padding:25px;
+ box-shadow:0 20px 60px #00000055;
+ backdrop-filter:blur(20px)
+}
+
+.connect{max-width:650px;margin:auto}
+label{display:block;color:#aaa;font-size:13px;margin-bottom:8px}
+input{
+ width:100%;padding:15px;border-radius:12px;
+ border:1px solid #ffffff15;background:#090a0e;
+ color:white;outline:none
+}
+input:focus{border-color:#ff0050}
+
+.primary{
+ width:100%;margin-top:15px;padding:15px;
+ border:0;border-radius:12px;color:white;font-weight:800;
+ background:linear-gradient(90deg,#ff0050,#ff2869)
+}
+.secondary{
+ padding:11px 15px;border-radius:11px;
+ border:1px solid #ffffff18;background:#ffffff08;color:white
+}
+
+.roomtop{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:15px;flex-wrap:wrap
+}
+.streamer{display:flex;align-items:center;gap:12px}
+.avatar{
+ width:50px;height:50px;border-radius:50%;
+ display:grid;place-items:center;font-weight:900;
+ background:linear-gradient(135deg,#ff0050,#00f2ea)
+}
+.streamer small{color:#888}
+.live{
+ background:#ff0050;padding:6px 9px;
+ border-radius:7px;font-size:10px;font-weight:900
+}
+
+.games-title{margin:30px 0 15px}
+.games{
+ display:grid;grid-template-columns:repeat(2,1fr);gap:18px
+}
+.game{
+ min-height:220px;padding:23px;
+ border-radius:20px;
+ border:1px solid #ffffff12;
+ background:linear-gradient(145deg,#181921,#0c0d12);
+ position:relative;overflow:hidden
+}
+.game:hover{transform:translateY(-3px)}
+.icon{font-size:55px;margin-bottom:18px}
+.game h3{font-size:23px}
+.game p{color:#999;margin-top:8px;line-height:1.5}
+.game button{
+ margin-top:20px;padding:11px 16px;
+ border:0;border-radius:10px;font-weight:800
+}
+.coming{opacity:.55}
+.coming:after{
+ content:"COMING SOON";
+ position:absolute;top:20px;right:-38px;
+ transform:rotate(35deg);
+ background:#555;padding:8px 45px;
+ font-size:10px;font-weight:900
+}
+
+.game-screen{text-align:center}
+.game-screen h2{font-size:35px}
+.instruction{color:#999;margin:10px 0 20px}
+.bigone{
+ font-size:95px;font-weight:1000;color:#ff0050;
+ text-shadow:0 0 35px #ff005077
+}
+
+.players{margin-top:20px}
+.player{
+ display:flex;align-items:center;justify-content:space-between;
+ padding:12px;margin-top:8px;
+ border-radius:12px;background:#ffffff06
+}
+.playerleft{display:flex;align-items:center;gap:10px}
+.mini{
+ width:34px;height:34px;border-radius:50%;
+ display:grid;place-items:center;font-size:12px;font-weight:bold;
+ background:linear-gradient(135deg,#ff0050,#00f2ea)
+}
+.kick{
+ padding:7px 10px;border:0;border-radius:8px;
+ background:#ff174f;color:white;font-size:11px
+}
+
+.modal{
+ position:fixed;inset:0;background:#000b;
+ display:grid;place-items:center;padding:20px;z-index:100
+}
+.modalbox{
+ width:min(500px,100%);
+ background:#15161d;
+ border:1px solid #ffffff18;
+ border-radius:20px;padding:25px;text-align:center
+}
+.modalbox h2{margin-bottom:12px}
+.modalbox p{color:#999;line-height:1.5}
+.actions{
+ display:grid;grid-template-columns:1fr 1fr;
+ gap:10px;margin-top:20px
+}
+.actions button{
+ padding:12px;border-radius:10px;
+ border:1px solid #ffffff15;background:#ffffff08;color:white
+}
+
+.toast{
+ position:fixed;left:50%;bottom:25px;
+ transform:translate(-50%,100px);
+ background:white;color:#111;
+ padding:13px 20px;border-radius:12px;
+ font-weight:bold;z-index:200;
+ transition:.3s
+}
+.toast.show{transform:translate(-50%,0)}
+
+@media(max-width:650px){
+ .games{grid-template-columns:1fr}
+ .actions{grid-template-columns:1fr}
+ main{padding-top:15px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+ <div class="logo">LIVE<span>HUB</span></div>
+ <div class="status">
+  <span class="dot"></span>LIVE SYSTEM
+ </div>
+</header>
+
+<main>
+
+<!-- CONNECT -->
+
+<section id="connectPage">
+
+ <div class="hero">
+  <h1>PLAY WITH THE <span>LIVE</span></h1>
+  <p>Connect a livestream and let viewers join interactive games.</p>
+ </div>
+
+ <div class="card connect">
+  <label>Livestream username</label>
+
+  <input id="username"
+         placeholder="@streamer"
+         maxlength="30">
+
+  <button class="primary" onclick="connectLive()">
+   🔴 CONNECT LIVE
+  </button>
+
+  <p style="color:#666;font-size:12px;text-align:center;margin-top:15px">
+   Demo mode — real TikTok LIVE integration requires an authorized backend.
+  </p>
+ </div>
+
+</section>
+
+
+<!-- ROOM -->
+
+<section id="roomPage" class="hidden">
+
+ <div class="card">
+
+  <div class="roomtop">
+
+   <div class="streamer">
+
+    <div class="avatar" id="avatar">S</div>
+
+    <div>
+     <strong id="streamer">@streamer</strong><br>
+     <small>Livestream connected</small>
+    </div>
+
+    <span class="live">LIVE</span>
+
+   </div>
+
+   <button class="secondary" onclick="openAdmin()">
+    ⚙ ADMIN
+   </button>
+
+  </div>
+
+  <div class="games-title">
+   <h2>Choose a Game</h2>
+   <p style="color:#777;margin-top:5px">
+    Viewers can join the available games.
+   </p>
+  </div>
+
+  <div class="games">
+
+   <div class="game">
+    <div class="icon">🦑</div>
+    <h3>Squid Game</h3>
+    <p>Viewers type <b>1</b> in the LIVE chat to join.</p>
+
+    <button onclick="openSquid()">
+     PLAY
+    </button>
+   </div>
+
+   <div class="game coming">
+    <div class="icon">🎮</div>
+    <h3>Game 2</h3>
+    <p>This game isn't available yet.</p>
+
+    <button onclick="comingSoon()">
+     LOCKED
+    </button>
+   </div>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- SQUID GAME -->
+
+<section id="squidPage" class="hidden">
+
+ <div class="card game-screen">
+
+  <div style="font-size:65px">🦑</div>
+
+  <h2>Squid Game</h2>
+
+  <p class="instruction">
+   Tell viewers to type this number in LIVE chat:
+  </p>
+
+  <div class="bigone">1</div>
+
+  <div class="card" style="margin-top:20px">
+
+   <h3>Players Joined</h3>
+
+   <p style="color:#777;margin-top:6px">
+    Viewers who send <b>1</b> appear here.
+   </p>
+
+   <div id="playerList" class="players"></div>
+
+  </div>
+
+  <button class="secondary"
+          style="margin-top:20px"
+          onclick="backRoom()">
+   ← BACK TO GAMES
+  </button>
+
+ </div>
+
+</section>
+
+</main>
+
+
+<!-- ADMIN -->
+
+<div id="adminModal" class="modal hidden">
+
+ <div class="modalbox">
+
+  <h2>⚙ Streamer Admin Panel</h2>
+
+  <p>Streamer controls</p>
+
+  <div class="actions">
+
+   <button onclick="addDemo()">
+    ➕ ADD PLAYER
+   </button>
+
+   <button onclick="kickLast()">
+    ❌ KICK LAST
+   </button>
+
+   <button onclick="announcement()">
+    📢 ANNOUNCEMENT
+   </button>
+
+   <button onclick="resetPlayers()">
+    🔄 RESET
+   </button>
+
+  </div>
+
+  <button class="secondary"
+          style="margin-top:20px"
+          onclick="closeAdmin()">
+   CLOSE
+  </button>
+
+ </div>
+
+</div>
+
+
+<!-- COMING SOON -->
+
+<div id="comingModal" class="modal hidden">
+
+ <div class="modalbox">
+
+  <div style="font-size:60px">🔒</div>
+
+  <h2>Coming Soon</h2>
+
+  <p>
+   This game isn't available yet.
+   The streamer hasn't enabled it.
+  </p>
+
+  <button onclick="closeComing()"
+          style="margin-top:20px;padding:12px 25px;border:0;border-radius:10px">
+   OK
+  </button>
+
+ </div>
+
+</div>
+
+
+<div id="toast" class="toast"></div>
+
+
+<script>
+
+let streamerName = "";
+let players = [];
+
+const demoNames = [
+ "PlayerOne",
+ "Shadow",
+ "Ali",
+ "Speed",
+ "Guest123",
+ "Viewer",
+ "Dragon",
+ "FootballFan"
+];
+
+function save(){
+ localStorage.setItem(
+  "livehub_players",
+  JSON.stringify(players)
+ );
+ localStorage.setItem(
+  "livehub_streamer",
+  streamerName
+ );
+}
+
+function load(){
+
+ streamerName =
+  localStorage.getItem("livehub_streamer") || "";
+
+ try{
+  players =
+   JSON.parse(localStorage.getItem("livehub_players")) || [];
+ }catch{
+  players=[];
+ }
+
+ if(streamerName){
+
+  document.getElementById("connectPage")
+   .classList.add("hidden");
+
+  document.getElementById("roomPage")
+   .classList.remove("hidden");
+
+  updateStreamer();
+ }
+
+ renderPlayers();
+}
+
+function connectLive(){
+
+ let name =
+  document.getElementById("username")
+  .value.trim();
+
+ if(!name){
+  toast("Enter a username first.");
+  return;
+ }
+
+ if(!name.startsWith("@"))
+  name="@"+name;
+
+ streamerName=name;
+
+ save();
+ updateStreamer();
+
+ document.getElementById("connectPage")
+  .classList.add("hidden");
+
+ document.getElementById("roomPage")
+  .classList.remove("hidden");
+
+ toast("LIVE connected!");
+}
+
+function updateStreamer(){
+
+ document.getElementById("streamer")
+  .textContent=streamerName;
+
+ document.getElementById("avatar")
+  .textContent=
+   streamerName.replace("@","")
+   .charAt(0).toUpperCase();
+}
+
+function openSquid(){
+
+ document.getElementById("roomPage")
+  .classList.add("hidden");
+
+ document.getElementById("squidPage")
+  .classList.remove("hidden");
+
+ renderPlayers();
+}
+
+function backRoom(){
+
+ document.getElementById("squidPage")
+  .classList.add("hidden");
+
+ document.getElementById("roomPage")
+  .classList.remove("hidden");
+}
+
+function addPlayer(name){
+
+ if(!name)return;
+
+ if(players.some(
+  p=>p.toLowerCase()===name.toLowerCase()
+ ))return;
+
+ players.push(name);
+
+ save();
+ renderPlayers();
+
+ toast(name+" joined!");
+}
+
+function addDemo(){
+
+ let available =
+  demoNames.filter(
+   n=>!players.includes(n)
+  );
+
+ if(!available.length){
+  toast("All demo players are added.");
+  return;
+ }
+
+ addPlayer(
+  available[
+   Math.floor(Math.random()*available.length)
+  ]
+ );
+}
+
+function kickPlayer(index){
+
+ players.splice(index,1);
+
+ save();
+ renderPlayers();
+
+ toast("Player kicked.");
+}
+
+function kickLast(){
+
+ if(!players.length){
+  toast("No players.");
+  return;
+ }
+
+ players.pop();
+
+ save();
+ renderPlayers();
+
+ toast("Last player kicked.");
+}
+
+function resetPlayers(){
+
+ players=[];
+
+ save();
+ renderPlayers();
+
+ toast("Players reset.");
+}
+
+function renderPlayers(){
+
+ let list =
+  document.getElementById("playerList");
+
+ if(!players.length){
+
+  list.innerHTML=`
+   <div style="padding:25px;color:#666">
+    Waiting for viewers to type 1...
+   </div>
+  `;
+
+  return;
+ }
+
+ list.innerHTML =
+  players.map((name,index)=>`
+
+   <div class="player">
+
+    <div class="playerleft">
+
+     <div class="mini">
+      ${escapeHTML(name.charAt(0).toUpperCase())}
+     </div>
+
+     <strong>
+      ${escapeHTML(name)}
+     </strong>
+
+    </div>
+
+    <button class="kick"
+     onclick="kickPlayer(${index})">
+     KICK
+    </button>
+
+   </div>
+
+  `).join("");
+}
+
+function openAdmin(){
+
+ document.getElementById("adminModal")
+  .classList.remove("hidden");
+}
+
+function closeAdmin(){
+
+ document.getElementById("adminModal")
+  .classList.add("hidden");
+}
+
+function announcement(){
+
+ let message =
+  prompt("Enter announcement:");
+
+ if(message)
+  toast("📢 "+message);
+}
+
+function comingSoon(){
+
+ document.getElementById("comingModal")
+  .classList.remove("hidden");
+}
+
+function closeComing(){
+
+ document.getElementById("comingModal")
+  .classList.add("hidden");
+}
+
+function toast(message){
+
+ let t=document.getElementById("toast");
+
+ t.textContent=message;
+ t.classList.add("show");
+
+ setTimeout(
+  ()=>t.classList.remove("show"),
+  2500
+ );
+}
+
+function escapeHTML(text){
+
+ return text
+  .replaceAll("&","&amp;")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;")
+  .replaceAll('"',"&quot;")
+  .replaceAll("'","&#039;");
+}
+
+/*
+ DEMO:
+
+ To simulate a viewer typing "1",
+ open the browser console and run:
+
+ addPlayer("Viewer123");
+
+ Real TikTok LIVE chat integration
+ requires an authorized backend.
+*/
+
+load();
+
+</script>
+
+</body>
+</html>
